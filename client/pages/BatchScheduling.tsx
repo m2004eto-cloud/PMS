@@ -1,5 +1,40 @@
 import { useState } from "react";
 import { ArrowLeft, Plus, Calendar, Zap } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { format } from "date-fns";
+
+const batchSchema = z.object({
+  product: z.string().min(1, "Product is required"),
+  quantity: z.coerce.number().min(1, "Quantity must be greater than 0"),
+  scheduledStart: z.string().min(1, "Scheduled start date is required"),
+  rawMaterial: z.string().min(1, "Raw material ID is required"),
+});
 
 interface Batch {
   id: string;
@@ -24,7 +59,8 @@ const PRODUCTION_STAGES = [
 ];
 
 export default function BatchScheduling() {
-  const [batches] = useState<Batch[]>([
+  const [open, setOpen] = useState(false);
+  const [batches, setBatches] = useState<Batch[]>([
     {
       id: "BATCH-2024-0847",
       product: "Premium Sesame Paste",
@@ -77,6 +113,32 @@ export default function BatchScheduling() {
     },
   ]);
 
+  const form = useForm<z.infer<typeof batchSchema>>({
+    resolver: zodResolver(batchSchema),
+    defaultValues: {
+      product: "",
+      quantity: 0,
+      scheduledStart: format(new Date(), "yyyy-MM-dd'T'HH:mm"),
+      rawMaterial: "",
+    },
+  });
+
+  const onSubmit = (values: z.infer<typeof batchSchema>) => {
+    const newBatch: Batch = {
+      id: `BATCH-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+      product: values.product,
+      quantity: values.quantity,
+      stage: PRODUCTION_STAGES[0],
+      scheduledStart: values.scheduledStart.replace("T", " "),
+      estimatedCompletion: format(new Date(new Date(values.scheduledStart).getTime() + 8 * 60 * 60 * 1000), "yyyy-MM-dd HH:mm"),
+      rawMaterial: values.rawMaterial,
+      status: "scheduled",
+    };
+    setBatches([...batches, newBatch]);
+    setOpen(false);
+    form.reset();
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -98,10 +160,88 @@ export default function BatchScheduling() {
               </p>
             </div>
           </div>
-          <button className="btn-primary gap-2">
-            <Plus className="w-4 h-4" />
-            Schedule Batch
-          </button>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <button className="btn-primary gap-2">
+                <Plus className="w-4 h-4" />
+                Schedule Batch
+              </button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Schedule New Batch</DialogTitle>
+              </DialogHeader>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
+                  <FormField
+                    control={form.control}
+                    name="product"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Product</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a product" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="Premium Sesame Paste">Premium Sesame Paste</SelectItem>
+                            <SelectItem value="Sweet Paste Pistachio">Sweet Paste Pistachio</SelectItem>
+                            <SelectItem value="Organic Sesame Paste">Organic Sesame Paste</SelectItem>
+                            <SelectItem value="Sweet Paste Cocoa">Sweet Paste Cocoa</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="quantity"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Quantity (kg)</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="scheduledStart"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Scheduled Start</FormLabel>
+                        <FormControl>
+                          <Input type="datetime-local" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="rawMaterial"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Raw Material ID</FormLabel>
+                        <FormControl>
+                          <Input placeholder="e.g. RM-2024-0160" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="flex justify-end pt-4">
+                    <Button type="submit">Schedule Batch</Button>
+                  </div>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
         </div>
       </header>
 
