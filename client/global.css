@@ -1,0 +1,164 @@
+/** @import must precede all other statements */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /**
+   * Ninja Dashboard Theme - High-Density Dark UI
+   * tailwind.config.ts expects HSL values for dynamic color system
+  */
+  :root {
+    /* Light mode defaults */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 217.2 91.2% 59.8%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 217.2 91.2% 59.8%;
+
+    /* Ninja Dashboard Design System */
+    --bg-dashboard: 217.2 32.6% 11%;
+    --bg-card: 217.2 32.6% 16%;
+    --border-color: 217.2 32.6% 20%;
+    --text-primary: 0 0% 95.3%;
+    --text-secondary: 217.2 8.9% 61.8%;
+    --color-accent: 217.2 91.2% 59.8%;
+    --color-success: 142.3 76.2% 36.3%;
+    --color-critical: 0 84.2% 60.2%;
+    --color-warning: 38.6 92.1% 50.2%;
+
+    /* High-DPI UI Adjustments */
+    --density-padding: 12px;
+    --font-size-data: 0.875rem;
+    --radius: 0.5rem;
+
+    --sidebar-background: 217.2 32.6% 11%;
+    --sidebar-foreground: 0 0% 95.3%;
+    --sidebar-primary: 217.2 91.2% 59.8%;
+    --sidebar-primary-foreground: 222.2 47.4% 11.2%;
+    --sidebar-accent: 217.2 32.6% 20%;
+    --sidebar-accent-foreground: 0 0% 95.3%;
+    --sidebar-border: 217.2 32.6% 20%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 217.2 32.6% 11%;
+    --foreground: 0 0% 95.3%;
+    --card: 217.2 32.6% 16%;
+    --card-foreground: 0 0% 95.3%;
+    --popover: 217.2 32.6% 16%;
+    --popover-foreground: 0 0% 95.3%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 217.2 32.6% 11%;
+    --secondary: 217.2 32.6% 20%;
+    --secondary-foreground: 0 0% 95.3%;
+    --muted: 217.2 32.6% 20%;
+    --muted-foreground: 217.2 8.9% 61.8%;
+    --accent: 217.2 91.2% 59.8%;
+    --accent-foreground: 217.2 32.6% 11%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 217.2 32.6% 20%;
+    --input: 217.2 32.6% 16%;
+    --ring: 217.2 91.2% 59.8%;
+
+    /* Ninja Dashboard colors */
+    --bg-dashboard: 217.2 32.6% 11%;
+    --bg-card: 217.2 32.6% 16%;
+    --border-color: 217.2 32.6% 20%;
+    --text-primary: 0 0% 95.3%;
+    --text-secondary: 217.2 8.9% 61.8%;
+    --color-accent: 217.2 91.2% 59.8%;
+    --color-success: 142.3 76.2% 36.3%;
+    --color-critical: 0 84.2% 60.2%;
+    --color-warning: 38.6 92.1% 50.2%;
+  }
+}
+
+@media (min-width: 2560px) {
+  :root {
+    --density-padding: 24px;
+    --font-size-data: 1.125rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply dark;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Inter", sans-serif;
+  }
+
+  :where(p, span, li, h1, h2, h3, h4, h5, h6, a, button, label, td, th) {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  pre,
+  code {
+    overflow-x: auto;
+    white-space: pre;
+  }
+}
+
+@layer components {
+  .card-ninja {
+    @apply bg-card border border-border rounded-lg p-4;
+  }
+
+  .data-cell {
+    @apply text-sm font-medium text-foreground;
+  }
+
+  .data-label {
+    @apply text-xs font-medium text-text-secondary uppercase tracking-wide;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 transition-opacity;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg bg-secondary text-secondary-foreground font-medium text-sm hover:bg-opacity-80 transition-colors border border-border;
+  }
+
+  .metric-badge {
+    @apply inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium;
+  }
+
+  .metric-badge-success {
+    @apply metric-badge bg-success bg-opacity-10 text-success;
+  }
+
+  .metric-badge-critical {
+    @apply metric-badge bg-critical bg-opacity-10 text-critical;
+  }
+
+  .metric-badge-warning {
+    @apply metric-badge bg-warning bg-opacity-10 text-warning;
+  }
+}
